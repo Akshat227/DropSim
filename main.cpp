@@ -3,8 +3,8 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-int GrainW = 10;
-int GrainH = 10;
+int GrainW = 2;
+int GrainH = 2;
 
 struct FallingRect
 {
@@ -38,26 +38,35 @@ int main(int argc, char *args[])
             {
                 if (event.button.button == SDL_BUTTON_LEFT)
                 {
-                    FallingRect Fr;
-                    Fr.rect = {event.button.x, event.button.y, GrainW, GrainH};
-                    Fr.V_velocity = 0;
-                    fallingRects.push_back(Fr);
-                }
 
-            }
-                for (auto &r : fallingRects)
-                {
-                    r.V_velocity += gravity;
-                    r.rect.y += static_cast<int>(r.V_velocity);
-
-                    // Stop at the floor
-                    if (r.rect.y + r.rect.h > 600)
+                    int spawnCount = 50; 
+                    for (int i = 0; i < spawnCount; ++i)
                     {
-                        r.rect.y = 600 - r.rect.h;
-                        r.V_velocity = 0; // Stop falling
+                        FallingRect Fr;
+                        
+                        Fr.rect = {
+                            event.button.x + (rand() % 61 - 30), 
+                            event.button.y + (rand() % 61 - 30), 
+                            GrainW,
+                            GrainH};
+                        Fr.V_velocity = 0;
+                        fallingRects.push_back(Fr);
                     }
                 }
+            }
         }
+
+            for (auto &r : fallingRects)
+            {
+                r.V_velocity += gravity;
+                r.rect.y += static_cast<int>(r.V_velocity);
+
+                if (r.rect.y + r.rect.h > 600)
+                {
+                    r.rect.y = 600 - r.rect.h;
+                    r.V_velocity = 0;
+                }
+            }
 
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 
